@@ -68,8 +68,8 @@ async function getRSI(symbol,interval,id){
   let el=document.getElementById(id);
   el.innerText=rsi.toFixed(1);
   el.className="";
-  if(rsi>70){el.className="high";}
-  if(rsi<30){el.className="low";}
+  if(rsi>60){el.className="high";}
+  if(rsi<40){el.className="low";}
 }
 
 function update(){
