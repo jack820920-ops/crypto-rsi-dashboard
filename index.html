@@ -2,156 +2,88 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Crypto RSI Dashboard</title>
-
+<title>11 Crypto RSI Dashboard</title>
 <style>
-
 body{
 font-family:Arial;
 background:#0f172a;
 color:white;
 text-align:center;
 }
-
-h1{
-margin-top:30px;
-}
-
+h1{margin-top:30px;}
 table{
 margin:auto;
 border-collapse:collapse;
-width:80%;
-max-width:800px;
+width:90%;
+max-width:1000px;
 }
-
 th,td{
-padding:14px;
+padding:10px;
 border:1px solid #334155;
-font-size:18px;
+font-size:16px;
 }
-
-th{
-background:#1e293b;
-}
-
-.low{
-color:#22c55e;
-font-weight:bold;
-}
-
-.high{
-color:#ef4444;
-font-weight:bold;
-}
-
-.normal{
-color:white;
-}
-
+th{background:#1e293b;}
+.low{color:#22c55e;font-weight:bold;}
+.high{color:#ef4444;font-weight:bold;}
+.normal{color:white;}
 </style>
 </head>
 
 <body>
-
-<h1>Crypto RSI Dashboard</h1>
-<p>Auto refresh every 10 seconds</p>
+<h1>11 Crypto RSI Dashboard</h1>
+<p>Auto refresh every 10s</p>
 
 <table>
-
 <tr>
-<th>Coin</th>
-<th>1m</th>
-<th>5m</th>
-<th>15m</th>
-<th>1h</th>
+<th>Coin</th><th>1m</th><th>5m</th><th>15m</th><th>1h</th>
 </tr>
 
-<tr>
-<td>BTC</td>
-<td id="btc1">-</td>
-<td id="btc5">-</td>
-<td id="btc15">-</td>
-<td id="btc60">-</td>
-</tr>
-
-<tr>
-<td>ETH</td>
-<td id="eth1">-</td>
-<td id="eth5">-</td>
-<td id="eth15">-</td>
-<td id="eth60">-</td>
-</tr>
-
-<tr>
-<td>SOL</td>
-<td id="sol1">-</td>
-<td id="sol5">-</td>
-<td id="sol15">-</td>
-<td id="sol60">-</td>
-</tr>
+<tr><td>BTC</td><td id="BTC1">-</td><td id="BTC5">-</td><td id="BTC15">-</td><td id="BTC60">-</td></tr>
+<tr><td>ETH</td><td id="ETH1">-</td><td id="ETH5">-</td><td id="ETH15">-</td><td id="ETH60">-</td></tr>
+<tr><td>SOL</td><td id="SOL1">-</td><td id="SOL5">-</td><td id="SOL15">-</td><td id="SOL60">-</td></tr>
+<tr><td>DOGE</td><td id="DOGE1">-</td><td id="DOGE5">-</td><td id="DOGE15">-</td><td id="DOGE60">-</td></tr>
+<tr><td>XRP</td><td id="XRP1">-</td><td id="XRP5">-</td><td id="XRP15">-</td><td id="XRP60">-</td></tr>
+<tr><td>ADA</td><td id="ADA1">-</td><td id="ADA5">-</td><td id="ADA15">-</td><td id="ADA60">-</td></tr>
+<tr><td>AVAX</td><td id="AVAX1">-</td><td id="AVAX5">-</td><td id="AVAX15">-</td><td id="AVAX60">-</td></tr>
+<tr><td>LINK</td><td id="LINK1">-</td><td id="LINK5">-</td><td id="LINK15">-</td><td id="LINK60">-</td></tr>
+<tr><td>DOT</td><td id="DOT1">-</td><td id="DOT5">-</td><td id="DOT15">-</td><td id="DOT60">-</td></tr>
+<tr><td>ATOM</td><td id="ATOM1">-</td><td id="ATOM5">-</td><td id="ATOM15">-</td><td id="ATOM60">-</td></tr>
+<tr><td>LTC</td><td id="LTC1">-</td><td id="LTC5">-</td><td id="LTC15">-</td><td id="LTC60">-</td></tr>
 
 </table>
 
 <script>
-
-async function getRSI(symbol,interval,elementId){
-
-let url=`https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=${interval}&limit=100`;
-
-let r=await fetch(url);
-let d=await r.json();
-
-let closes=d.map(x=>parseFloat(x[4]));
-
-let gains=0;
-let losses=0;
-
-for(let i=closes.length-15;i<closes.length;i++){
-
-let diff=closes[i]-closes[i-1];
-
-if(diff>0){gains+=diff;}
-else{losses-=diff;}
-
-}
-
-let rs=gains/losses;
-let rsi=100-(100/(1+rs));
-
-let el=document.getElementById(elementId);
-
-el.innerText=rsi.toFixed(1);
-
-el.className="normal";
-
-if(rsi>70){el.className="high";}
-if(rsi<30){el.className="low";}
-
+async function getRSI(symbol,interval,id){
+  let url=`https://api.binance.com/api/v3/klines?symbol=${symbol}USDT&interval=${interval}&limit=100`;
+  let r=await fetch(url);
+  let d=await r.json();
+  let closes=d.map(x=>parseFloat(x[4]));
+  let gains=0, losses=0;
+  for(let i=closes.length-15;i<closes.length;i++){
+    let diff=closes[i]-closes[i-1];
+    if(diff>0){gains+=diff;}else{losses-=diff;}
+  }
+  let rs=gains/losses;
+  let rsi=100-(100/(1+rs));
+  let el=document.getElementById(id);
+  el.innerText=rsi.toFixed(1);
+  el.className="";
+  if(rsi>70){el.className="high";}
+  if(rsi<30){el.className="low";}
 }
 
 function update(){
-
-getRSI("BTCUSDT","1m","btc1");
-getRSI("BTCUSDT","5m","btc5");
-getRSI("BTCUSDT","15m","btc15");
-getRSI("BTCUSDT","1h","btc60");
-
-getRSI("ETHUSDT","1m","eth1");
-getRSI("ETHUSDT","5m","eth5");
-getRSI("ETHUSDT","15m","eth15");
-getRSI("ETHUSDT","1h","eth60");
-
-getRSI("SOLUSDT","1m","sol1");
-getRSI("SOLUSDT","5m","sol5");
-getRSI("SOLUSDT","15m","sol15");
-getRSI("SOLUSDT","1h","sol60");
-
+  const coins=["BTC","ETH","SOL","DOGE","XRP","ADA","AVAX","LINK","DOT","ATOM","LTC"];
+  const intervals=["1m","5m","15m","1h"];
+  coins.forEach(c=>{
+    intervals.forEach(i=>{
+      getRSI(c,i,`${c}${i.replace("m","")}`);
+    });
+  });
 }
 
 update();
-
 setInterval(update,10000);
-
 </script>
 
 </body>
