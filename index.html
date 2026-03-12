@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>11 Crypto RSI Dashboard</title>
+<title>11 Crypto RSI Dashboard (40~60)</title>
 <style>
 body{
 font-family:Arial;
@@ -23,14 +23,14 @@ border:1px solid #334155;
 font-size:16px;
 }
 th{background:#1e293b;}
-.low{color:#22c55e;font-weight:bold;}
-.high{color:#ef4444;font-weight:bold;}
-.normal{color:white;}
+.low{color:#22c55e;font-weight:bold;}   /* RSI <40 綠色 */
+.high{color:#ef4444;font-weight:bold;}  /* RSI >60 紅色 */
+.normal{color:white;}                   /* 40~60 白色 */
 </style>
 </head>
 
 <body>
-<h1>11 Crypto RSI Dashboard</h1>
+<h1>11 Crypto RSI Dashboard (40~60)</h1>
 <p>Auto refresh every 10s</p>
 
 <table>
@@ -67,9 +67,11 @@ async function getRSI(symbol,interval,id){
   let rsi=100-(100/(1+rs));
   let el=document.getElementById(id);
   el.innerText=rsi.toFixed(1);
-  el.className="";
+  
+  // 40~60 區間顏色邏輯
   if(rsi>60){el.className="high";}
-  if(rsi<40){el.className="low";}
+  else if(rsi<40){el.className="low";}
+  else{el.className="normal";}
 }
 
 function update(){
