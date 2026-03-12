@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Crypto RSI Dashboard</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#0f172a;
+color:white;
+text-align:center;
+}
+
+h1{
+margin-top:30px;
+}
+
+table{
+margin:auto;
+border-collapse:collapse;
+width:80%;
+max-width:800px;
+}
+
+th,td{
+padding:14px;
+border:1px solid #334155;
+font-size:18px;
+}
+
+th{
+background:#1e293b;
+}
+
+.low{
+color:#22c55e;
+font-weight:bold;
+}
+
+.high{
+color:#ef4444;
+font-weight:bold;
+}
+
+.normal{
+color:white;
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>Crypto RSI Dashboard</h1>
+<p>Auto refresh every 10 seconds</p>
+
+<table>
+
+<tr>
+<th>Coin</th>
+<th>1m</th>
+<th>5m</th>
+<th>15m</th>
+<th>1h</th>
+</tr>
+
+<tr>
+<td>BTC</td>
+<td id="btc1">-</td>
+<td id="btc5">-</td>
+<td id="btc15">-</td>
+<td id="btc60">-</td>
+</tr>
+
+<tr>
+<td>ETH</td>
+<td id="eth1">-</td>
+<td id="eth5">-</td>
+<td id="eth15">-</td>
+<td id="eth60">-</td>
+</tr>
+
+<tr>
+<td>SOL</td>
+<td id="sol1">-</td>
+<td id="sol5">-</td>
+<td id="sol15">-</td>
+<td id="sol60">-</td>
+</tr>
+
+</table>
+
+<script>
+
+async function getRSI(symbol,interval,elementId){
+
+let url=`https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=${interval}&limit=100`;
+
+let r=await fetch(url);
+let d=await r.json();
+
+let closes=d.map(x=>parseFloat(x[4]));
+
+let gains=0;
+let losses=0;
+
+for(let i=closes.length-15;i<closes.length;i++){
+
+let diff=closes[i]-closes[i-1];
+
+if(diff>0){gains+=diff;}
+else{losses-=diff;}
+
+}
+
+let rs=gains/losses;
+let rsi=100-(100/(1+rs));
+
+let el=document.getElementById(elementId);
+
+el.innerText=rsi.toFixed(1);
+
+el.className="normal";
+
+if(rsi>70){el.className="high";}
+if(rsi<30){el.className="low";}
+
+}
+
+function update(){
+
+getRSI("BTCUSDT","1m","btc1");
+getRSI("BTCUSDT","5m","btc5");
+getRSI("BTCUSDT","15m","btc15");
+getRSI("BTCUSDT","1h","btc60");
+
+getRSI("ETHUSDT","1m","eth1");
+getRSI("ETHUSDT","5m","eth5");
+getRSI("ETHUSDT","15m","eth15");
+getRSI("ETHUSDT","1h","eth60");
+
+getRSI("SOLUSDT","1m","sol1");
+getRSI("SOLUSDT","5m","sol5");
+getRSI("SOLUSDT","15m","sol15");
+getRSI("SOLUSDT","1h","sol60");
+
+}
+
+update();
+
+setInterval(update,10000);
+
+</script>
+
+</body>
+</html>
